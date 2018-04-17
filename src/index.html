@@ -1,0 +1,75 @@
+<html lang="en">
+  <head>
+    <title>Sample Project</title>
+    <style>
+      body {
+        font-family: helvetica neue;
+      }
+
+    </style>
+
+
+  </head>
+  <body>
+    <div id="root"></div>
+    <input type="text" value="10" id="open" />
+    <input type="text" value="12" id="close" />
+    <input type="text" value="1" id="trend" />
+
+    <div id="result">
+
+    </div>
+
+    <script src="https://unpkg.com/brain.js@1.1.2/browser.min.js"></script>
+    <script>
+      const open = document.querySelector("#open")
+      const close = document.querySelector("#close")
+      const trend = document.querySelector("#trend")
+      const result = document.querySelector("#result")
+
+      function calculate() {
+        const network = new brain.NeuralNetwork()
+        // network.train([
+        //   { input: { diff: 113  }, output: { up: 1 } },
+        //   { input: { diff: -113 }, output: { down: 1 } },
+        //   { input: { diff: -1 }, output: { down: 1 } },
+        //   { input: { diff: 0.01 }, output: { up: 1 } },
+        //   { input: { diff: 12 }, output: { up: 1 } },
+        //   { input: { diff: -1000000 }, output: { down: 1 } },
+        //   { input: { diff: 113 }, output: { up: 1 } }
+        //   ])
+        // const prediction = brain.likely({ diff: (close.value - open.value)}, network);
+
+        network.train([
+          { input: { diff: 113, trend: 1 }, output: { long: 1, short: 0 } },
+          { input: { diff: -113, trend: 0 }, output: { long: 1, short: 0 } },
+          { input: { diff: -1, trend: 1  }, output: { long: 1, short: 0 } },
+          { input: { diff: 0.01, trend: 1 }, output: { long: 0, short: 1 } },
+          { input: { diff: 12, trend: 1 }, output: { long: 1, short: 1 } },
+          { input: { diff: -1000000, trend: 1 }, output: { long: 0, short: 0 } },
+          { input: { diff: 113, trend: 1 }, output: { long: 0, short: 0 } }
+        ])
+        const prediction = brain.likely({ diff: (close.value - open.value), trend: trend.value}, network);
+
+
+        result.innerHTML = prediction
+        console.log(prediction);
+
+      }
+
+      open.addEventListener("change", (e) => {
+        calculate();
+      })
+
+      close.addEventListener("change", (e) => {
+        calculate();
+      })
+
+      trend.addEventListener("change", (e) => {
+        calculate();
+      })
+      calculate();
+
+    </script>
+  </body>
+</html>
