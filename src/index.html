@@ -49,11 +49,10 @@
           { input: { diff: -1000000, trend: 1 }, output: { long: 0, short: 0 } },
           { input: { diff: 113, trend: 1 }, output: { long: 0, short: 0 } }
         ])
-        const prediction = brain.likely({ diff: (close.value - open.value), trend: trend.value}, network);
+        const prediction = network.run({ diff: (close.value - open.value), trend: trend.value});
 
 
-        result.innerHTML = prediction
-        console.log(prediction);
+        result.innerHTML = `short: ${prediction.long.toFixed(2) * 100}% long: ${prediction.short.toFixed(2) * 100}%`
 
       }
 
